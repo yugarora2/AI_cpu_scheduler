@@ -1,0 +1,9 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# data files can be large: share them through Google Drive, not git
+data/*.csv
+# trained model: keep it local. If yours is small (check the size) you may remove this line to commit it.
+models/*.joblib
