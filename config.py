@@ -6,7 +6,7 @@ candidate list, bump SIM_VERSION so that data made with different code is
 never mixed together by accident (merge_data.py refuses mixed versions).
 """
 
-SIM_VERSION = 1
+SIM_VERSION = 2
 
 # Workload families (see workloads.py for what each one means)
 FAMILIES = ["cpu_bound", "interactive", "mixed", "heavy_tail", "bursty", "batch"]
