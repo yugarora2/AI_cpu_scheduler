@@ -60,11 +60,7 @@ def make_workload(family, seed):
         arrivals = np.cumsum(np.round(gaps)).astype(int)
         arrivals -= arrivals.min()
 
-    if rng.random() < 0.5:
-        prio = rng.integers(0, 5, n)                # priority unrelated to job length
-    else:                                           # short job => small number => high priority
-        prio = np.clip(np.round(4 * bursts / bursts.max() + rng.normal(0, 0.5, n)), 0, 4).astype(int)
-
+    prio = rng.integers(0, 5, n)
     return [
         {"pid": f"P{i}", "at": int(arrivals[i]), "bt": int(bursts[i]), "priority": int(prio[i])}
         for i in range(n)
