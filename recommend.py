@@ -30,6 +30,19 @@ def find_model_path():
     return None
 
 
+def list_models():
+    """Every model file the app can use: models/*.joblib (newest first), plus ./ranker.joblib for old setups."""
+    import glob
+    paths = glob.glob("models/*.joblib")
+    if os.path.exists("ranker.joblib"):
+        paths.append("ranker.joblib")
+    return sorted(paths, key=os.path.getmtime, reverse=True)
+
+
+def model_name(path):
+    return os.path.splitext(os.path.basename(path))[0]
+
+
 def load_bundle(src):
     """src = file path or file-like object. Only load model files you created yourself."""
     bundle = joblib.load(src)

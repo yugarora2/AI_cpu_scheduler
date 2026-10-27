@@ -69,6 +69,21 @@ The app shows a warning while a demo model is loaded.
    scheduler.
 3. CSV upload format: columns `pid, at, bt, priority` (priority optional).
 
+## Switching between models (for example v1 and v2) in the app
+
+The sidebar has a **Model version** drop-down listing every `.joblib` file in the `models/` folder, newest first.
+Pick one and press **Recommend schedulers** again. Each result says which model produced it.
+
+* Name your files clearly: `models/ranker_v1.joblib`, `models/ranker_v2.joblib`. The file name is what the
+  drop-down shows. Models trained with `colab/02_merge_and_train.ipynb` also carry a description (`MODEL_LABEL`)
+  that appears under the drop-down.
+* A model downloaded earlier as `ranker.joblib` works too: just rename it, for example to `ranker_v1.joblib`.
+* Any model file can also be uploaded from the sidebar without copying it into `models/`.
+* All models use the same simulator and the same score; only the shortlist can differ.
+* Keep each dataset version in its own Drive folder and its own Git tag (`data-v1`, `data-v2`), and never
+  merge files from different versions. `merge_data.py` refuses mixed `SIM_VERSION`s.
+* Try it right away with two demo models: `python make_demo_model.py demo_a` and `python make_demo_model.py demo_b`.
+
 ## Files
 
 | File | Purpose |

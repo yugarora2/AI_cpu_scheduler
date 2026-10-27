@@ -1,7 +1,8 @@
 """
 Build a SMALL demo model so you can try the app on your laptop right away.
 
-    python make_demo_model.py
+    python make_demo_model.py            # saves models/ranker.joblib
+    python make_demo_model.py demo_a     # or choose a name: models/demo_a.joblib
 
 Uses one CPU core and takes under a minute. The model is trained on only a few hundred
 workloads, so it is for testing the interface ONLY. For real results train on Colab
@@ -23,10 +24,14 @@ from generate_data import simulate_one
 from modeling import fit_rankers
 from scoring import add_labels
 
-PER_FAMILY = 60
+import sys
 
-if os.path.exists("models/ranker.joblib"):
-    ans = input("models/ranker.joblib already exists. Overwrite it with a demo model? [y/N] ")
+PER_FAMILY = 60
+NAME = sys.argv[1] if len(sys.argv) > 1 else "ranker"      # e.g. python make_demo_model.py demo_a
+PATH = f"models/{NAME}.joblib"
+
+if os.path.exists(PATH):
+    ans = input(f"{PATH} already exists. Overwrite it with a demo model? [y/N] ")
     if ans.strip().lower() != "y":
         raise SystemExit("Nothing changed.")
 
@@ -37,7 +42,7 @@ models = fit_rankers(df, n_jobs=1, n_estimators=60)
 os.makedirs("models", exist_ok=True)
 meta = {"sklearn": sklearn.__version__, "numpy": np.__version__, "pandas": pd.__version__,
         "python": platform.python_version(), "n_dev_workloads": len(df),
-        "created": datetime.date.today().isoformat(), "demo": True}
+        "created": datetime.date.today().isoformat(), "demo": True, "label": "tiny demo model"}
 joblib.dump({"models": models, "cands": LABEL_NAMES, "features": FEATURE_COLS, "meta": meta},
-            "models/ranker.joblib", compress=3)
-print(f"Saved models/ranker.joblib (DEMO model, {len(df)} workloads).")
+            PATH, compress=3)
+print(f"Saved {PATH} (DEMO model, {len(df)} workloads).")

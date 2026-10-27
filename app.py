@@ -7,6 +7,7 @@ Adaptive CPU Scheduler Recommender (Streamlit app).      Run:  streamlit run app
 """
 import hashlib
 import io
+import os
 
 import numpy as np
 import pandas as pd
@@ -15,7 +16,7 @@ import streamlit as st
 from config import FAMILIES, WEIGHTS
 from candidates import CLAIRVOYANT
 from workloads import make_workload
-from recommend import (find_model_path, load_bundle, version_warnings, validate, recommend,
+from recommend import (list_models, model_name, load_bundle, version_warnings, validate, recommend,
                        metrics_frame, TRAIN_N_RANGE)
 from gantt import gantt_figure, gantt_text
 
@@ -45,27 +46,41 @@ def _load_bytes(data):
     return load_bundle(io.BytesIO(data))
 
 
+UPLOAD = "Upload a model file..."
+
+
 def get_bundle():
+    """Sidebar model chooser. Returns (bundle, display name, unique id of the model)."""
     st.sidebar.header("Model")
-    uploaded = st.sidebar.file_uploader("Load a model file (ranker.joblib)", type=["joblib"],
-                                        help="Only load files you trained yourself.")
+    paths = list_models()
+    options = paths + [UPLOAD]
+    if not paths:
+        st.sidebar.info("No model found in the models/ folder. Upload one below.")
+    choice = st.sidebar.selectbox("Model version", options, index=0,
+                                  format_func=lambda p: UPLOAD if p == UPLOAD else model_name(p),
+                                  help="Every .joblib file in the models/ folder appears here. "
+                                       "Name your files e.g. ranker_v1.joblib and ranker_v2.joblib.")
     try:
-        if uploaded is not None:
-            return _load_bytes(uploaded.getvalue()), f"uploaded file {uploaded.name}"
-        path = find_model_path()
-        if path:
-            import os
-            return _load_path(path, os.path.getmtime(path)), path
+        if choice == UPLOAD:
+            uploaded = st.sidebar.file_uploader("Model file (.joblib)", type=["joblib"],
+                                                help="Only load files you trained yourself.")
+            if uploaded is None:
+                if not paths:
+                    st.error("No trained model found.")
+                    st.markdown(
+                        "Put the model you downloaded from Colab into the **`models/`** folder (for example "
+                        "`models/ranker_v1.joblib`) and reload this page, or upload it in the sidebar.\n\n"
+                        "To just try the interface, run `python make_demo_model.py` in a terminal. It builds a "
+                        "small demo model in under a minute.")
+                else:
+                    st.info("Choose a model in the sidebar, or upload a model file.")
+                st.stop()
+            return _load_bytes(uploaded.getvalue()), uploaded.name, f"upload:{uploaded.name}:{uploaded.size}"
+        mtime = os.path.getmtime(choice)
+        return _load_path(choice, mtime), model_name(choice), f"{choice}:{mtime}"
     except Exception as e:                      # noqa: BLE001 - show any loading problem to the user
-        st.sidebar.error(f"Could not load the model: {e}")
+        st.sidebar.error(f"Could not load that model: {e}")
         st.stop()
-    st.error("No trained model found.")
-    st.markdown(
-        "Put the model you downloaded from Colab at **`models/ranker.joblib`** and reload this page "
-        "(or upload it in the sidebar).\n\n"
-        "To just try the interface, run `python make_demo_model.py` in a terminal. It builds a small "
-        "demo model in under a minute.")
-    st.stop()
 
 
 # ------------------------------------------------------------------ input helpers
@@ -94,7 +109,7 @@ def initial_frame(source, family, seed, csv_file):
 
 
 # ------------------------------------------------------------------ page
-bundle, model_where = get_bundle()
+bundle, model_where, model_id = get_bundle()
 meta = bundle.get("meta", {})
 
 st.title("Adaptive CPU Scheduler Recommender")
@@ -102,7 +117,10 @@ st.caption("Enter a set of processes. A trained model shortlists the most promis
            "only those are simulated, and the best one is shown with its Gantt chart.")
 
 with st.sidebar:
-    st.caption(f"Loaded: {model_where}")
+    if meta.get("label"):
+        st.caption(f"**{model_where}**: {meta['label']}")
+    else:
+        st.caption(f"**{model_where}**")
     if meta:
         st.caption(f"Trained on {meta.get('n_dev_workloads', '?')} workloads, "
                    f"scikit-learn {meta.get('sklearn', '?')}, {meta.get('created', '')}")
@@ -156,13 +174,14 @@ for e in errors:
 for w in warnings:
     st.warning(w)
 
-sig = hashlib.md5(repr((procs, k, method_label, verify)).encode()).hexdigest()
+sig = hashlib.md5(repr((procs, k, method_label, verify, model_id)).encode()).hexdigest()
 go = st.button("Recommend schedulers", type="primary", disabled=bool(errors))
 if go:
     with st.spinner("Ranking schedulers and simulating the shortlist..."):
         st.session_state["result"] = recommend(bundle, procs, k=k, method=METHODS[method_label], verify=verify)
         st.session_state["sig"] = sig
         st.session_state["procs"] = procs
+        st.session_state["model_used"] = model_where
 
 res = st.session_state.get("result")
 if res is None:
@@ -189,6 +208,7 @@ with st.expander("All 10 features given to the model"):
 
 # ---- 3. model shortlist
 st.header(f"3. The model's shortlist (top {res['k']})")
+st.caption(f"Model used for these results: **{st.session_state.get('model_used', model_where)}**")
 rk = res["ranking"].copy()
 rk["in shortlist"] = np.where(rk["rank"] <= res["k"], "yes", "")
 st.dataframe(
