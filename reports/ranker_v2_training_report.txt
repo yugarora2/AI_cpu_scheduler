@@ -1,0 +1,75 @@
+development workloads: 72000   reserved final-test workloads: 1200
+
+=== 5-fold cross-validation (random split) (72000 workloads, 10 candidate schedulers) ===
+ranker           k  hit rate   regret   avg WT   avg RT  sims run
+rf_classifier    1     55.8%   0.0568   105.22    93.76  1/10
+rf_classifier    2     77.9%   0.0250   104.59    92.72  2/10
+rf_classifier    3     86.1%   0.0123   104.51    92.41  3/10
+rf_classifier    5     94.3%   0.0039   104.49    92.11  5/10
+
+rf_regressor     1     54.6%   0.0556   105.27    93.07  1/10
+rf_regressor     2     73.6%   0.0313   104.64    92.36  2/10
+rf_regressor     3     82.3%   0.0190   104.63    92.30  3/10
+rf_regressor     5     90.5%   0.0090   104.63    91.62  5/10
+
+tree             1     53.4%   0.0636   105.28    92.33  1/10
+tree             2     75.9%   0.0318   104.80    91.62  2/10
+tree             3     84.0%   0.0155   104.61    92.13  3/10
+tree             5     92.3%   0.0055   104.52    92.03  5/10
+
+static           1     14.4%   0.1768   148.40     6.57  1/10
+static           2     25.4%   0.1260   144.40    15.56  2/10
+static           3     38.7%   0.0964   141.64    20.02  3/10
+static           5     48.2%   0.0811   139.54    26.34  5/10
+
+random           1     11.6%   0.2248   136.59    49.96  1/10
+random           2     22.9%   0.1313   125.25    62.00  2/10
+random           3     33.7%   0.0898   118.43    71.18  3/10
+random           5     54.2%   0.0471   110.38    83.06  5/10
+
+oracle           -    100.0%   0.0000   104.44    92.10  10/10 (runs everything)
+SRTF reference  (needs true burst times; real OS cannot do this) avg WT 70.36, avg RT 67.72
+
+=== leave-one-family-out (tough test) (72000 workloads, 10 candidate schedulers) ===
+ranker           k  hit rate   regret   avg WT   avg RT  sims run
+rf_classifier    1     52.1%   0.0641   106.13    92.48  1/10
+rf_classifier    2     75.6%   0.0286   104.79    91.49  2/10
+rf_classifier    3     83.0%   0.0159   104.57    91.99  3/10
+rf_classifier    5     92.2%   0.0054   104.44    92.32  5/10
+
+rf_regressor     1     49.3%   0.0672   105.98    93.11  1/10
+rf_regressor     2     71.3%   0.0350   104.84    92.33  2/10
+rf_regressor     3     78.7%   0.0227   104.72    92.29  3/10
+rf_regressor     5     88.7%   0.0108   104.57    92.00  5/10
+
+tree             1     48.6%   0.0682   105.56    90.93  1/10
+tree             2     69.3%   0.0367   104.76    90.92  2/10
+tree             3     81.0%   0.0203   104.65    91.53  3/10
+tree             5     90.5%   0.0076   104.48    92.22  5/10
+
+static           1      7.3%   0.2763   154.09    32.01  1/10
+static           2     16.5%   0.1572   148.14    14.09  2/10
+static           3     20.8%   0.1254   144.00    18.74  3/10
+static           5     37.8%   0.0893   141.17    23.40  5/10
+
+random           1     11.6%   0.2246   136.74    49.74  1/10
+random           2     22.6%   0.1318   125.76    61.30  2/10
+random           3     33.3%   0.0903   118.72    70.81  3/10
+random           5     54.0%   0.0473   110.40    83.23  5/10
+
+oracle           -    100.0%   0.0000   104.44    92.10  10/10 (runs everything)
+SRTF reference  (needs true burst times; real OS cannot do this) avg WT 70.36, avg RT 67.72
+
+Feature importance (random forest classifier):
+  burst_cv           0.324
+  burst_tail         0.155
+  frac_short         0.134
+  prio_burst_corr    0.123
+  burst_mean         0.108
+  load               0.055
+  frac_simultaneous  0.046
+  gap_cv             0.027
+  n                  0.017
+  prio_std           0.012
+
+Saved models/ranker.joblib and models/tree_rules.txt

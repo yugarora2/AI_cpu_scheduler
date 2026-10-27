@@ -1,0 +1,94 @@
+|--- burst_cv <= 0.72
+|   |--- burst_cv <= 0.36
+|   |   |--- load <= 0.68
+|   |   |   |--- prio_burst_corr <= 0.03
+|   |   |   |   |--- n <= 14.50
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- n >  14.50
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |--- prio_burst_corr >  0.03
+|   |   |   |   |--- n <= 23.50
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- n >  23.50
+|   |   |   |   |   |--- class: FCFS
+|   |   |--- load >  0.68
+|   |   |   |--- n <= 21.50
+|   |   |   |   |--- prio_burst_corr <= 0.15
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- prio_burst_corr >  0.15
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |--- n >  21.50
+|   |   |   |   |--- load <= 0.86
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- load >  0.86
+|   |   |   |   |   |--- class: FCFS
+|   |--- burst_cv >  0.36
+|   |   |--- prio_burst_corr <= 0.01
+|   |   |   |--- load <= 1.54
+|   |   |   |   |--- load <= 0.95
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- load >  0.95
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |--- load >  1.54
+|   |   |   |   |--- prio_burst_corr <= -0.10
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- prio_burst_corr >  -0.10
+|   |   |   |   |   |--- class: FCFS
+|   |   |--- prio_burst_corr >  0.01
+|   |   |   |--- load <= 5.43
+|   |   |   |   |--- prio_burst_corr <= 0.14
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |   |--- prio_burst_corr >  0.14
+|   |   |   |   |   |--- class: PRIO_P
+|   |   |   |--- load >  5.43
+|   |   |   |   |--- prio_burst_corr <= 0.20
+|   |   |   |   |   |--- class: PRIO_NP
+|   |   |   |   |--- prio_burst_corr >  0.20
+|   |   |   |   |   |--- class: PRIO_NP
+|--- burst_cv >  0.72
+|   |--- burst_cv <= 1.03
+|   |   |--- prio_burst_corr <= 0.09
+|   |   |   |--- burst_cv <= 0.85
+|   |   |   |   |--- gap_cv <= 1.87
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- gap_cv >  1.87
+|   |   |   |   |   |--- class: FCFS
+|   |   |   |--- burst_cv >  0.85
+|   |   |   |   |--- burst_tail <= 3.18
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- burst_tail >  3.18
+|   |   |   |   |   |--- class: MLFQ_2_4_8
+|   |   |--- prio_burst_corr >  0.09
+|   |   |   |--- prio_burst_corr <= 0.23
+|   |   |   |   |--- burst_cv <= 0.87
+|   |   |   |   |   |--- class: PRIO_P
+|   |   |   |   |--- burst_cv >  0.87
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |--- prio_burst_corr >  0.23
+|   |   |   |   |--- n <= 27.50
+|   |   |   |   |   |--- class: PRIO_P
+|   |   |   |   |--- n >  27.50
+|   |   |   |   |   |--- class: PRIO_P
+|   |--- burst_cv >  1.03
+|   |   |--- burst_tail <= 6.33
+|   |   |   |--- burst_cv <= 1.37
+|   |   |   |   |--- prio_burst_corr <= 0.27
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- prio_burst_corr >  0.27
+|   |   |   |   |   |--- class: PRIO_P
+|   |   |   |--- burst_cv >  1.37
+|   |   |   |   |--- burst_cv <= 1.99
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- burst_cv >  1.99
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |--- burst_tail >  6.33
+|   |   |   |--- burst_mean <= 15.16
+|   |   |   |   |--- frac_short <= 0.58
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- frac_short >  0.58
+|   |   |   |   |   |--- class: MLFQ_2_4_8
+|   |   |   |--- burst_mean >  15.16
+|   |   |   |   |--- prio_burst_corr <= 0.33
+|   |   |   |   |   |--- class: MLFQ_4_8_16
+|   |   |   |   |--- prio_burst_corr >  0.33
+|   |   |   |   |   |--- class: MLFQ_4_8_16
